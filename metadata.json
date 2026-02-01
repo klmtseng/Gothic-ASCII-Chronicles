@@ -1,0 +1,5 @@
+{
+  "name": "Gothic ASCII Chronicles",
+  "description": "A dark fantasy action-platformer rendered in ASCII. Features AI-generated levels via Google Gemini and adaptive controls for Desktop/Mobile.",
+  "requestFramePermissions": []
+}
