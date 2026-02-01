@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ASCII Stickman Chronicles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Gothic Fonts */
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
+      
+      body {
+        background-color: #0c0a09; /* warm black/stone-950 */
+        font-family: 'Courier Prime', monospace;
+        overflow: hidden; 
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: none;
+        color: #d6d3d1; /* stone-300 */
+      }
+      
+      /* Vignette effect */
+      .vignette {
+        background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 40;
+        pointer-events: none;
+      }
+      
+      .gothic-text {
+        font-family: 'Cinzel', serif;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1c1917; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #44403c; 
+        border: 1px solid #000;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <div class="vignette"></div>
+  </body>
+</html>
