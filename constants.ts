@@ -1,70 +1,37 @@
-import { LevelData } from "./types";
+import { StoryNode } from "./types";
 
-export const GRAVITY = 0.04;      // Reduced from 0.05
-export const JUMP_FORCE = -0.7;   // Reduced from -0.9
-export const MOVE_SPEED = 0.2;    // Reduced significantly from 0.4
-export const MAX_SPEED = 0.5;     // Reduced from 0.8
-export const FRICTION = 0.85;     // Increased friction slightly for tighter control
+// Visual constraints
+export const MAX_ART_WIDTH = 50;
+export const MAX_ART_HEIGHT = 15;
 
-// Visual viewport size (in characters)
-export const VIEWPORT_WIDTH = 40;
-export const VIEWPORT_HEIGHT = 20;
-
-export const DEFAULT_LEVEL: LevelData = {
-  name: "The Crypt of Echoes",
-  story: "You awaken in a cold, stone dungeon. The walls whisper of escape.",
-  map: [
-    "############################################################",
-    "#                                                          #",
-    "#                                                          #",
-    "#      $                                                   #",
-    "#     ###            $        E                            #",
-    "#                   ###      ###           X               #",
-    "#  @       ^   $                      ##########           #",
-    "################        ###                                #",
-    "#                                ^  ^                      #",
-    "#            ####    E          ######                     #",
-    "#                   ###                                    #",
-    "#     $                                                    #",
-    "#    ###                                        $          #",
-    "#           ^   ^   ^                      ##########      #",
-    "############################################################",
-    "############################################################",
-    "############################################################",
-    "############################################################",
-    "############################################################",
-    "############################################################"
-  ]
+export const INITIAL_STORY: StoryNode = {
+  description: "You stand before the iron gates of the Black Citadel. The rain tastes of ash. A gargoyle perched above watches you with hollow eyes. The gates are slightly ajar, revealing a darkness thicker than night.",
+  asciiArt: `
+      /\\
+     /  \\   |    |    |
+    /    \\  |    |    |
+   /      \\ |____|____|
+  /   /\\   \\    ||
+ /   /  \\   \\   ||
+/___/____\\___\\  ||
+    |  |        ||    ^
+   _|__|__      ||   / \\
+  | ____  |     ||  /___\\
+  ||    | |     ||   | |
+  ||    | |     ||   | |
+  ||____|_|     ||   |_|
+  |_______|    _||_
+  `,
+  choices: [
+    { label: "Enter the Citadel", action: "Push open the gates and enter confidently" },
+    { label: "Search surroundings", action: "Look around the entrance for hidden items" },
+    { label: "Yell a challenge", action: "Scream at the castle to draw out enemies" }
+  ],
+  hp: 100,
+  gold: 0
 };
 
-// ASCII Art Assets
 export const ASCII_TITLE = `
-  ▄████  ▒█████  ▄▄▄█████▓ 
- ██▒ ▀█▒▒██▒  ██▒▓  ██▒ ▓▒ 
-▒██░▄▄▄░▒██░  ██▒▒ ▓██░ ▒░ 
-░▓█  ██▓▒██   ██░░ ▓██▓ ░  
-░▒▓███▀▒░ ████▓▒░  ▒██▒    
- ░▒   ▒ ░ ▒░▒░▒░   ▒ ░░    
-  ░   ░   ░ ▒ ▒░     ░     
-░ ░   ░ ░ ░ ░ ▒    ░       
-      ░     ░ ░            
    GOTHIC CHRONICLES
+     - TEXT RPG -
 `;
-
-// More "Human-like" stickman sprites using standard/extended ASCII
-export const PLAYER_SPRITE = {
-  IDLE: 'Å',  // Looks like a person standing (Head + Body + Legs)
-  RUN_1: 'λ', // Looks like legs walking
-  RUN_2: 'k', // Looks like running with arm swinging
-  JUMP: 'Y',  // Looks like arms raised high
-  DEAD: '☠',  // Skull
-};
-
-export const VISUAL_ASSETS = {
-  WALL: '▓',    // Solid block texture
-  SPIKE: '▲',   // Upward spike
-  COIN: '♦',    // Gem/Diamond
-  EXIT: 'Ω',    // Omega gate
-  ENEMY: 'Ψ',   // Trident/Devil
-  EMPTY: ' '
-};

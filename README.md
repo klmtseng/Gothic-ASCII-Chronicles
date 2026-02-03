@@ -1,66 +1,48 @@
-# Gothic ASCII Chronicles
+# Gothic ASCII Chronicles: Text Adventure
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/react-v19-61DAFB.svg)
-![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-8E75B2.svg)
+![Genre](https://img.shields.io/badge/Genre-Text%20Adventure-red.svg)
+![AI](https://img.shields.io/badge/AI-Google%20Gemini-8E75B2.svg)
 
-**Gothic ASCII Chronicles** is a browser-based action platformer that blends retro text-based aesthetics with modern web technologies. Players guide a lone wanderer through procedurally generated dungeons, rendered entirely using standard ASCII and Unicode characters.
+**Gothic ASCII Chronicles** is an interactive fiction game where the world is generated in real-time by Artificial Intelligence. 
 
-## 🎮 Features
+Instead of jumping on platforms, you choose your path through a dark, procedurally generated narrative. The AI acts as your "Dungeon Master," describing the scene, tracking your health and gold, and illustrating the world with ASCII art on the fly.
 
-*   **Distinct Visual Style**: High-fidelity text rendering using Gothic unicode symbols (`▓`, `Å`, `Ψ`, `†`) styled with TailwindCSS for lighting and atmosphere.
-*   **Infinite Replayability**: Integrated with **Google Gemini API** to generate unique level layouts and story snippets based on user-defined themes (e.g., "Ice Cavern", "Volcano").
-*   **Adaptive Control Engine**:
-    *   **Desktop**: Full-screen immersion with Keyboard controls (`WASD` / `Arrows`).
-    *   **Mobile**: Touch-optimized interface with a custom-rendered virtual analog stick and action buttons.
-*   **Physics System**: Custom AABB collision detection, velocity-based movement, and momentum physics running on a 30 FPS fixed timestep.
+## 📖 Features
 
-## 🕹️ Controls
+*   **AI Dungeon Master**: Powered by **Google Gemini 3 Flash**, generating descriptive Gothic horror text and consistent storytelling.
+*   **Procedural ASCII Art**: Every scene includes a unique AI-generated ASCII illustration representing monsters, loot, or landscapes.
+*   **Role-Playing Elements**: Tracks **HP** and **Gold**. Combat results and looting are calculated by the AI based on your choices.
+*   **Responsive UI**: A chat-like terminal interface that works perfectly on Desktop and Mobile.
 
-| Action | Desktop (Keyboard) | Mobile (Touch) |
-| :--- | :--- | :--- |
-| **Move** | `Arrow Keys` or `WASD` | Virtual Joystick |
-| **Jump** | `Space`, `W`, or `Up` | **( * )** Button |
-| **Crouch** | `S` or `Down` | **( / )** Button |
-| **Interact** | `E` | **( + )** Button |
+## 🕹️ How to Play
+
+1.  Read the scene description and look at the ASCII art.
+2.  Choose one of the 3 actions provided at the bottom of the screen.
+3.  Watch the consequences unfold in the log.
+4.  Survive as long as possible and amass gold.
 
 ## 🛠️ Technical Overview
 
-### Rendering
-The game does not use Canvas API for rendering entities. Instead, it uses a reactive grid of `<span>` elements. This allows for easy styling via CSS classes (color, text-shadow, animations) directly on individual "pixels" (characters).
-
-### Device Detection
-The app utilizes a custom `useEffect` hook to detect input capabilities (`pointer: coarse`) and screen width.
-*   **Desktop Mode**: Hides on-screen controls, scales text larger for monitors.
-*   **Mobile Mode**: Enables touch listeners and renders the floating UI.
-
-### AI Generation
-Level data is fetched from Google Gemini using a strict JSON schema to ensure playable geometry (walls, enemies, coins, and spawn points) is generated consistently.
+*   **Engine**: React 19 + TypeScript.
+*   **State Management**: Tracks a linear history of `StoryNodes` (description + art + state).
+*   **AI Integration**: Sends the previous turn's context to Gemini to ensure continuity in the narrative.
 
 ## 🚀 Development Setup
 
-1.  **Clone the repository**
+1.  **Clone & Install**:
     ```bash
-    git clone https://github.com/yourusername/gothic-ascii-chronicles.git
-    cd gothic-ascii-chronicles
-    ```
-
-2.  **Install dependencies**
-    ```bash
+    git clone ...
     npm install
     ```
 
-3.  **Configure API Key**
-    Create a `.env` file in the root directory:
-    ```env
-    API_KEY=your_google_gemini_api_key
-    ```
+2.  **API Key**:
+    Create `.env` with `API_KEY=your_gemini_key`.
 
-4.  **Start the server**
+3.  **Run**:
     ```bash
     npm start
     ```
 
 ## 📜 License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License.
