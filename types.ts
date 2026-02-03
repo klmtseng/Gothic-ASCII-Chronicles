@@ -2,36 +2,24 @@ export enum GameState {
   MENU = 'MENU',
   PLAYING = 'PLAYING',
   GAME_OVER = 'GAME_OVER',
-  VICTORY = 'VICTORY',
-  GENERATING = 'GENERATING',
+  LOADING = 'LOADING',
 }
 
-export enum EntityType {
-  EMPTY = ' ',
-  WALL = '#',
-  SPIKE = '^',
-  COIN = '$',
-  EXIT = 'X',
-  PLAYER = '@',
-  ENEMY = 'E',
+export interface Choice {
+  label: string; // What the user sees (e.g., "Examine the chest")
+  action: string; // The specific intent sent to AI
 }
 
-export interface Position {
-  x: number;
-  y: number;
+export interface StoryNode {
+  description: string; // The narrative text
+  asciiArt: string;    // The visual representation of the scene
+  choices: Choice[];   // Available actions
+  hp: number;          // Player health tracking
+  gold: number;        // Player gold tracking
 }
 
-export interface LevelData {
-  map: string[]; // Array of strings representing rows
-  story: string;
-  name: string;
-}
-
-export interface PlayerState {
-  pos: Position;
-  velocity: Position;
-  isGrounded: boolean;
-  health: number;
-  score: number;
-  facingRight: boolean;
+export interface LogEntry {
+  type: 'player' | 'narrator';
+  text: string;
+  art?: string;
 }
