@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { StoryNode } from "../types";
+import { StoryNode, Language } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -10,10 +10,11 @@ export const resetGame = () => {
   conversationHistory = [];
 };
 
-export const generateNextTurn = async (previousNode: StoryNode, userAction: string): Promise<StoryNode> => {
-  const modelId = "gemini-3-flash-preview";
+export const generateNextTurn = async (previousNode: StoryNode, userAction: string, language: Language): Promise<StoryNode> => {
+  const textModel = "gemini-3-flash-preview";
+  const imageModel = "gemini-2.5-flash-image";
   
-  // Construct context
+  // 1. Generate Narrative (Text)
   const context = `
     Current HP: ${previousNode.hp}
     Current Gold: ${previousNode.gold}
@@ -21,34 +22,36 @@ export const generateNextTurn = async (previousNode: StoryNode, userAction: stri
     Player Action: ${userAction}
   `;
 
-  const prompt = `
-    You are a Dungeon Master for a dark fantasy Gothic text adventure.
+  const langInstruction = language === 'zh' 
+    ? "Output Language: Traditional Chinese (繁體中文). Tone: Gothic novel style, dark fantasy, serious, slightly archaic."
+    : "Output Language: English. Tone: Dark, gritty, Lovecraftian.";
+
+  const textPrompt = `
+    You are a Dungeon Master for a dark fantasy Gothic adventure.
     Based on the Context below, generate the next scene.
     
     Context:
     ${context}
 
     Requirements:
-    1. 'description': Write a short, atmospheric paragraph (max 3 sentences) describing the result of the action and the new room/situation. Tone: Dark, gritty, Lovecraftian.
-    2. 'asciiArt': Generate a purely visual ASCII art block (max 50 chars wide, 15 lines high) representing the CURRENT scene (e.g., a monster, a chest, a hallway, a ruin). Do NOT use text inside the art. Use characters like #, /, \\, ., @, etc.
-    3. 'choices': Provide 3 distinct options for the player.
-    4. 'hp': Update player HP (subtract if they took damage, add if healed). Min 0.
-    5. 'gold': Update player Gold (add if they found loot).
+    1. 'description': Write a short, atmospheric paragraph (max 3 sentences) describing the result of the action and the new room/situation. ${langInstruction}
+    2. 'choices': Provide 3 distinct options for the player in the same language as the description.
+    3. 'hp': Update player HP (subtract if they took damage, add if healed). Min 0.
+    4. 'gold': Update player Gold (add if they found loot).
     
     If HP reaches 0, the description should describe a gruesome death, and choices should be empty.
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: modelId,
-      contents: prompt,
+    const textResponse = await ai.models.generateContent({
+      model: textModel,
+      contents: textPrompt,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             description: { type: Type.STRING },
-            asciiArt: { type: Type.STRING },
             hp: { type: Type.INTEGER },
             gold: { type: Type.INTEGER },
             choices: {
@@ -66,23 +69,50 @@ export const generateNextTurn = async (previousNode: StoryNode, userAction: stri
       }
     });
 
-    const text = response.text;
-    if (!text) throw new Error("No response from AI");
-    
-    const data = JSON.parse(text) as StoryNode;
-    
-    // Update history for next turn
-    conversationHistory.push(`Action: ${userAction}`);
-    conversationHistory.push(`Result: ${data.description}`);
+    const textData = JSON.parse(textResponse.text!);
+    const newNode: StoryNode = {
+        ...textData,
+        imageBase64: null // Placeholder
+    };
 
-    return data;
+    // Update history
+    conversationHistory.push(`Action: ${userAction}`);
+    conversationHistory.push(`Result: ${newNode.description}`);
+
+    // 2. Generate Illustration (Image) based on the new description
+    // We keep the prompt in English for the Image model for better accuracy, even if the story is in Chinese.
+    // If description is in Chinese, we might want to translate it for the prompt, but Gemini usually handles it.
+    // To be safe, we prepend a style instruction.
+    try {
+        const imagePrompt = `
+            Create a woodcut style illustration for this dark fantasy scene: "${newNode.description}".
+            Style details: Black and white linocut, etching style, high contrast, thick distinct lines, gothic horror atmosphere, ink stamp texture.
+            No text in the image.
+        `;
+
+        const imageResponse = await ai.models.generateContent({
+            model: imageModel,
+            contents: { parts: [{ text: imagePrompt }] },
+        });
+
+        for (const part of imageResponse.candidates![0].content.parts) {
+            if (part.inlineData) {
+                newNode.imageBase64 = part.inlineData.data;
+                break;
+            }
+        }
+    } catch (imgError) {
+        console.warn("Image generation failed, proceeding with text only:", imgError);
+    }
+
+    return newNode;
 
   } catch (error) {
     console.error("AI Generation failed:", error);
     return {
-      description: "The mists of time swirl confusingly... (AI Connection Failed). You stand still.",
-      asciiArt: previousNode.asciiArt,
-      choices: [{ label: "Try again", action: userAction }],
+      description: language === 'zh' ? "時間的迷霧混亂地旋轉... (AI 連線失敗)。你佇立原地。" : "The mists of time swirl confusingly... (AI Connection Failed). You stand still.",
+      imageBase64: null,
+      choices: [{ label: language === 'zh' ? "再試一次" : "Try again", action: userAction }],
       hp: previousNode.hp,
       gold: previousNode.gold
     };
