@@ -5,37 +5,38 @@ interface MobileControlsProps {
   choices: Choice[];
   onChoose: (action: string) => void;
   disabled: boolean;
+  labels: {
+    commands: string;
+    noActions: string;
+  };
 }
 
-const MobileControls: React.FC<MobileControlsProps> = ({ choices, onChoose, disabled }) => {
-  if (choices.length === 0) return null;
-
+const MobileControls: React.FC<MobileControlsProps> = ({ choices, onChoose, disabled, labels }) => {
   return (
-    <div className="w-full max-w-3xl bg-stone-900 border-t-2 border-stone-700 p-4 z-20">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div className="bg-stone-900 p-3 border-t border-stone-800 h-auto shrink-0">
+      <div className="text-[10px] text-stone-500 mb-2 uppercase tracking-widest text-center border-b border-stone-800 pb-1">{labels.commands}</div>
+      <div className="grid grid-cols-1 gap-2">
         {choices.map((choice, idx) => (
           <button
             key={idx}
             disabled={disabled}
             onClick={() => onChoose(choice.action)}
             className={`
-                relative py-3 px-2 border border-stone-600 bg-stone-950 text-stone-300
-                font-mono text-sm uppercase tracking-wider
-                hover:bg-red-900/30 hover:border-red-500 transition-all
-                disabled:opacity-50 disabled:cursor-not-allowed
-                group
+                text-left px-3 py-2 border border-stone-700 bg-black text-stone-300
+                font-mono text-xs md:text-sm hover:bg-stone-800 hover:text-white hover:border-stone-500
+                transition-all disabled:opacity-30 disabled:cursor-not-allowed
+                flex items-center group
             `}
           >
-            {/* Hover Indicator */}
-            <span className="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-red-500">†</span>
-            <span className="z-10 relative">{choice.label}</span>
+            <span className="w-4 text-stone-600 group-hover:text-red-500 transition-colors mr-2">
+              {idx + 1}.
+            </span>
+            {choice.label}
           </button>
         ))}
-      </div>
-      
-      {/* Custom input line for future expansion or "feel" */}
-      <div className="mt-2 text-center">
-        <span className="text-[10px] text-stone-600 font-mono">CHOOSE THY FATE</span>
+        {choices.length === 0 && (
+           <div className="text-stone-700 text-xs text-center py-2 italic">{labels.noActions}</div>
+        )}
       </div>
     </div>
   );
